@@ -1,0 +1,86 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Tracker</title>
+    <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+    <header class="header">
+        <h1>My Book Tracker</h1>
+        <p class="tagline">Track, Rate, and Review the Books You Read</p>
+    </header>
+
+    <main>
+        <section class="container">
+            <div class="add-book">
+                <h2>Add a New Book</h2>
+                
+                   <form action="/add" method="post">
+                        <input type="text" name="book_isbn" placeholder="book_isbn" required>
+                        <input  type="text" name="title" placeholder="Book Title" required>
+                        <input  type="text" name="rating" placeholder="Rating (1-5)" required min="1" max="5">
+                        <input   type="date" name="date" placeholder="when did you read" required>
+                        <textarea  name="review" placeholder="Your Review" required></textarea>
+                    <button type="submit">Add Book</button>
+            </form>
+            </div>
+
+            <div class="book-list">
+                <div class="sort-options">
+                    <button onclick="sortByRating()">Sort by Rating</button>
+                    <button onclick="sortByRecency()">Sort by Recency</button>
+                </div>
+
+                <div class="books" id="book-cards">
+                    <% books.forEach(book => { %>
+                        <div class="book-card" data-id="<%= book.id %>" data-rating="<%= book.rating %>" data-date="<%= book.date %>">
+                            <img src="<%= book.cover %>" alt="Book Cover" class="book-cover">
+                            <div class="book-details">
+                                <h3><%= book.title %></h3>
+                                <p class="book-review">Review: <%= book.review %></p>
+                                <p class="book-rating">Rating: <%= book.rating %></p>
+                                <p class="book-rating">Date: <%= book.date %></p>
+                                <div class="book-actions">
+                                    <button class="edit-btn" onclick="editBook('<%= book.id %>')">Edit</button>
+                                    <button class="delete-btn" onclick="deleteBook('<%= book.id %>')">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <p>&copy; 2025 My Book Tracker. All rights reserved.</p>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact Us</a>
+        </div>
+    </footer>
+
+    <script>
+        function sortByRating() {
+            window.location.href = "/sortbyrating";
+            }
+     function sortByRecency() {
+            window.location.href = "/sortbyrecency";
+            }
+        function editBook(id) {
+            window.location.href = `/edit/${id}`;
+        }
+
+        function deleteBook(id) {
+            if (confirm("Are you sure you want to delete this book?")) {
+                fetch(`/delete/${id}`, { method: 'POST' })
+                    .then(() => window.location.reload());
+            }
+        }
+    </script>
+</body>
+</html>
